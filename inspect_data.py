@@ -3,7 +3,7 @@
 Run from the repository root:
     python3 inspect_data.py
 
-Place extracted CSV data in the archive/ folder. The archive data should
+Place extracted stock data in the archive/ folder. The archive data should
 remain excluded from Git using .gitignore.
 """
 from pathlib import Path
@@ -20,9 +20,9 @@ def main():
             "Extract the dataset into an 'archive' folder next to this script."
         )
 
-    csv_files = sorted(DATA_DIR.rglob("*.csv"))
+    csv_files = sorted(p for p in DATA_DIR.rglob("*") if p.is_file() and p.suffix.lower() in {".csv", ".txt"})
     if not csv_files:
-        raise SystemExit(f"No CSV files found inside {DATA_DIR}")
+        raise SystemExit(f"No .csv or .txt files found inside {DATA_DIR}")
 
     total_rows = 0
     total_bytes = 0
@@ -48,9 +48,9 @@ def main():
 
     print("DATASET SUMMARY")
     print("------------------------------")
-    print(f"CSV files: {len(csv_files):,}")
-    print(f"CSV size (MiB): {total_bytes / (1024 ** 2):,.2f}")
-    print(f"CSV size (MB): {total_bytes / 1_000_000:,.2f}")
+    print(f"Data files: {len(csv_files):,}")
+    print(f"Data size (MiB): {total_bytes / (1024 ** 2):,.2f}")
+    print(f"Data size (MB): {total_bytes / 1_000_000:,.2f}")
     print(f"Records read: {total_rows:,}")
     print(f"Distinct column layouts: {len(headers_seen)}")
     for headers in sorted(headers_seen):
