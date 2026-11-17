@@ -41,22 +41,21 @@ def main():
                   .withColumn("ticker", F.regexp_extract(
                       F.col("source_file"), r"/([^/]+)\\.us\\.txt$", 1))
                   .withColumn("asset_type", F.lit(category))
-                  .withColumn("date", F.to_date(F.col("Date"), "yyyy-MM-dd"))
+                  .withColumn("trade_date", F.to_date(F.col("Date"), "yyyy-MM-dd"))
                   .drop("Date"))
             frames.append(df)
 
-        all_data = frames[0].unionByName(frames[1]).cache()
+        all_data = frames[0].unionByName(frames[1])
         print("\n=== Dataset row counts ===")
         all_data.groupBy("asset_type").count().orderBy("asset_type").show()
         print("TOTAL ROWS:", all_data.count())
         print("\n=== Sample records ===")
-        all_data.select("ticker", "asset_type", "date", "Open", "Close", "Volume").show(10, truncate=False)
+        all_data.select("ticker", "asset_type", "trade_date", "Open", "Close", "Volume").show(10, truncate=False)
         print("\n=== Invalid dates / missing tickers ===")
         all_data.select(
-            F.sum(F.col("date").isNull().cast("long")).alias("invalid_dates"),
+            F.sum(F.col("trade_date").isNull().cast("long")).alias("invalid_dates"),
             F.sum((F.col("ticker") == "").cast("long")).alias("missing_tickers")
         ).show()
-        all_data.unpersist()
     finally:
         spark.stop()
 
