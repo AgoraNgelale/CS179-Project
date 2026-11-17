@@ -39,7 +39,7 @@ def main():
                   .csv(str(DATA / category))
                   .withColumn("source_file", F.input_file_name())
                   .withColumn("ticker", F.regexp_extract(
-                      F.col("source_file"), r"/([^/]+)\\.us\\.txt$", 1))
+                      F.col("source_file"), r"/([^/]+)\.us\.txt$", 1))
                   .withColumn("asset_type", F.lit(category))
                   .withColumn("trade_date", F.to_date(F.col("Date"), "yyyy-MM-dd"))
                   .drop("Date"))
