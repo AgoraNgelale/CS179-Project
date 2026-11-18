@@ -145,3 +145,23 @@ Do not commit the `archive/` dataset, passwords, access keys, or environment dir
 - **`Permission denied (publickey)` connecting to the Spark server** — log into Bolt and use `cs179g_login`, not direct `ssh cs179g@class-148`.
 - **Missing dataset path** — confirm you're on the group Spark server and that `~/CS179-Project/archive/Data` exists.
 - **Spark memory warnings** — the dataset contains thousands of small files. Avoid caching the entire raw dataset unnecessarily; inspect the actual error if a job fails.
+
+
+## Phase 2 team responsibilities
+
+The remaining Phase 2 work is divided into four workstreams. Each contributor should work on their own branch, provide evidence of their results, and open a pull request for review before merging.
+
+| Owner | Workstream | Suggested branch | Responsibilities | Deliverable |
+| --- | --- | --- | --- | --- |
+| **Agora** | Stock performance analysis | `agora/stock-analysis` | Test and refine distributed PySpark calculations for historical returns, price ranges, trading volume, and top-performing stocks/ETFs. | Tested analysis script and validated performance metrics |
+| **Teammate A** | Database integration | `feature/database` | Set up MySQL or another permitted database; define result tables; write Spark results and verify stored data with queries. | Database setup, loading code, and query evidence |
+| **Teammate B** | Spark benchmarking | `feature/benchmarks` | Compare execution times across worker counts and dataset sizes; record settings and results; generate comparison graphs. | Benchmark script, timing results, and graphs |
+| **Teammate C** | Report and submission | `feature/report` | Prepare the Phase 2 PDF, document pipeline and team contributions, collect screenshots and evaluation results, prepare the code ZIP and TA demo. | Final report, submission package, and demo checklist |
+
+### Shared output contract
+
+The analysis and database workstreams should agree on these fields before integration: `ticker`, `asset_type`, `first_date`, `last_date`, `first_close`, `last_close`, `return_pct`, `avg_volume`, and `trading_records`.
+
+The benchmarking workstream can begin with the existing loader. The report owner can create the report outline immediately, but each technical contributor is responsible for supplying screenshots, measured results, and a short explanation of their work.
+
+**Integration order:** validate stock analysis → store results in the database → finalize benchmarks and graphs → assemble report, ZIP, and demo. The team should coordinate use of the shared Spark-server working directory so branch switches do not disrupt each other's runs.
