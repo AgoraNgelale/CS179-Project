@@ -6,7 +6,7 @@ Run from the repository root:
     python spark_analysis.py
 """
 from pathlib import Path
-from pyspark.sql import SparkSession, functions as F, types as T
+from pyspark.sql import SparkSession, Window, functions as F, types as T
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "archive" / "Data"
@@ -51,6 +51,31 @@ def main():
         print("TOTAL ROWS:", all_data.count())
         print("\n=== Sample records ===")
         all_data.select("ticker", "asset_type", "trade_date", "Open", "Close", "Volume").show(10, truncate=False)
+        print("\n=== Performance by ticker ===")
+        # Group by ticker and asset type; order the observed closes by trade date.
+        # min_by/max_by select the close on the earliest/latest trading date.
+        performance = (all_data
+            .filter(F.col("trade_date").isNotNull() & F.col("Close").isNotNull())
+            .groupBy("asset_type", "ticker")
+            .agg(
+                F.min("trade_date").alias("first_date"),
+                F.max("trade_date").alias("last_date"),
+                F.min_by(F.col("Close"), F.col("trade_date")).alias("first_close"),
+                F.max_by(F.col("Close"), F.col("trade_date")).alias("last_close"),
+                F.min("Low").alias("lowest_low"),
+                F.max("High").alias("highest_high"),
+                F.avg("Volume").alias("avg_volume"),
+                F.count("*").alias("trading_records")
+            )
+            .withColumn("return_pct",
+                F.when(F.col("first_close") > 0,
+                    (F.col("last_close") / F.col("first_close") - 1) * 100))
+        )
+        performance.orderBy(F.desc("return_pct")).select(
+            "asset_type", "ticker", "first_date", "last_date",
+            "first_close", "last_close", "return_pct", "trading_records"
+        ).show(20, truncate=False)
+        print("TOTAL TICKERS:", performance.count())
         print("\n=== Invalid dates / missing tickers ===")
         all_data.select(
             F.sum(F.col("trade_date").isNull().cast("long")).alias("invalid_dates"),
