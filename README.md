@@ -45,6 +45,62 @@ git clone https://github.com/AgoraNgelale/CS179-Project.git
 cd CS179-Project
 ```
 
+## Work in your own folder on the shared Spark server (recommended)
+
+**Each teammate should use a separate clone and branch** rather than switching branches in `~/CS179-Project`. Everyone logs into the same `cs179g` account, so changing branches in the shared checkout changes the files other teammates see.
+
+On the **group Spark server**, choose a unique folder name and your assigned branch. For example, a teammate working on database integration can run:
+
+```bash
+cd ~
+git clone --branch main --single-branch \
+  https://github.com/AgoraNgelale/CS179-Project.git \
+  CS179-Project-Database
+cd ~/CS179-Project-Database
+git switch -c feature/database
+git push -u origin feature/database
+```
+
+If your assigned branch **already exists on GitHub**, clone that branch directly instead:
+
+```bash
+cd ~
+git clone --branch YOUR_BRANCH --single-branch \
+  https://github.com/AgoraNgelale/CS179-Project.git \
+  CS179-Project-YOUR_NAME
+```
+
+Replace `YOUR_BRANCH` and `YOUR_NAME` with your actual branch and a unique folder name. Do not run `git switch -c` for an existing branch.
+
+### Reuse the dataset without copying it
+
+The dataset already lives in `~/CS179-Project/archive`. Link it into **your own clone** (replace the folder name with yours):
+
+```bash
+ln -s ~/CS179-Project/archive ~/CS179-Project-Database/archive
+cd ~/CS179-Project-Database
+```
+
+This creates a symbolic link, **not a second copy of the dataset**. The code can still read `archive/Data/Stocks` and `archive/Data/ETFs`. Do not move, delete, or modify the shared dataset.
+
+A symlink may appear as an untracked `archive` entry in `git status`. Ignore it **only in your local clone**, without changing the team's tracked files:
+
+```bash
+echo "/archive" >> .git/info/exclude
+```
+
+Verify your setup:
+
+```bash
+git branch --show-current
+ls archive/Data
+git status
+```
+
+You should see your assigned branch, the `Stocks` and `ETFs` folders, and a clean working tree. Activate `spark_env` (Section 3) and run `python spark_analysis.py` from **your own clone**.
+
+For later updates, run `git pull origin YOUR_BRANCH` **inside your own folder**, not in the shared checkout. Each clone has its own Git working tree, although all teammates still share the same server account and dataset. If working on a personal laptop instead, you must separately obtain the dataset through an authorized method; the server's symbolic link will not work on your laptop.
+
 ## 3. Activate the Python / Spark environment
 
 The group server has a Miniconda environment called `spark_env`. After a fresh SSH login, `conda` might not be on the shell path. Initialize it explicitly:
