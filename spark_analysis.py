@@ -83,6 +83,12 @@ def main():
             .option("header", "true")
             .csv(str(output_dir)))
         print("CSV output directory:", output_dir)
+        print("\n=== Exporting ticker performance to Parquet ===")
+        parquet_dir = ROOT / "output" / "stock_performance_parquet"
+        (performance.coalesce(1).write
+            .mode("overwrite")
+            .parquet(str(parquet_dir)))
+        print("Parquet output directory:", parquet_dir)
         print("\n=== Invalid dates / missing tickers ===")
         all_data.select(
             F.sum(F.col("trade_date").isNull().cast("long")).alias("invalid_dates"),
