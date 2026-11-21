@@ -210,7 +210,7 @@ The remaining Phase 2 work is divided into four workstreams. Each contributor sh
 | Owner | Workstream | Suggested branch | Responsibilities | Deliverable |
 | --- | --- | --- | --- | --- |
 | **Agora** | Stock performance analysis | `agora/stock-analysis` | Test and refine distributed PySpark calculations for historical returns, price ranges, trading volume, and top-performing stocks/ETFs. | Tested analysis script and validated performance metrics |
-| **Teammate A** | Database integration | `feature/database` | Set up MySQL or another permitted database; define result tables; write Spark results and verify stored data with queries. | Database setup, loading code, and query evidence |
+| **isaac** | Database integration | `feature/database` | Set up MySQL or another permitted database; define result tables; write Spark results and verify stored data with queries. | Database setup, loading code, and query evidence |
 | Taha Mohiuddin | Spark benchmarking | `feature/benchmarks` | Compare execution times across worker counts and dataset sizes; record settings and results; generate comparison graphs. | Benchmark script, timing results, and graphs |
 | **Teammate C** | Report and submission | `feature/report` | Prepare the Phase 2 PDF, document pipeline and team contributions, collect screenshots and evaluation results, prepare the code ZIP and TA demo. | Final report, submission package, and demo checklist |
 
